@@ -1324,7 +1324,7 @@ if __name__ == "__main__":
     eeipclient.register_session("192.168.178.107")
     eeipclient.o_t_instance_id = 0x64
     eeipclient.o_t_length = 4
-    eeipclient.requested_packet_rate_o_t = 100000
+    eeipclient.o_t_requested_packet_rate = 100000
     eeipclient.o_t_realtime_format = RealTimeFormat.HEADER32BIT
     eeipclient.o_t_owner_redundant = False
     eeipclient.o_t_variable_length = False
@@ -1332,7 +1332,7 @@ if __name__ == "__main__":
 
     eeipclient.t_o_instance_id = 0x65
     eeipclient.t_o_length = 16
-    eeipclient.requested_packet_rate_t_o = 100000
+    eeipclient.t_o_requested_packet_rate = 100000
     eeipclient.t_o_realtime_format = RealTimeFormat.MODELESS
     eeipclient.t_o_owner_redundant = False
     eeipclient.t_o_variable_length = False
