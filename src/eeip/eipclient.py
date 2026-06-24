@@ -47,6 +47,7 @@ class EEIPClient:
         self.__tcp_port = 0xAF12
 
         self.__udp_client_receive_closed = False
+        self.__udp_server_socket = None
 
     def ListIdentity(self):
         """
