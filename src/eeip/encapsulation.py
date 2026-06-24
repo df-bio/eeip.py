@@ -48,7 +48,7 @@ class Encapsulation:
     def __init__(self):
         self.__sender_context = [0] * 8
         self.__command_specific_data = []
-        self.__session_handle = 0
+        self.session_handle = 0
         self.command = CommandsEnum.NOP
         self.length = 0
         self.__options = 0
@@ -60,10 +60,10 @@ class Encapsulation:
         returnvalue.append((int(self.command) & 0xFF00) >> 8)
         returnvalue.append(self.length & 0x00FF)
         returnvalue.append((self.length & 0xFF00) >> 8)
-        returnvalue.append(self.__session_handle & 0xFF)
-        returnvalue.append((self.__session_handle & 0xFF00) >> 8)
-        returnvalue.append((self.__session_handle & 0xFF0000) >> 16)
-        returnvalue.append((self.__session_handle & 0xFF000000) >> 24)
+        returnvalue.append(self.session_handle & 0xFF)
+        returnvalue.append((self.session_handle & 0xFF00) >> 8)
+        returnvalue.append((self.session_handle & 0xFF0000) >> 16)
+        returnvalue.append((self.session_handle & 0xFF000000) >> 24)
         returnvalue.append(self.__status & 0xFF)
         returnvalue.append((self.__status & 0xFF00) >> 8)
         returnvalue.append((self.__status & 0xFF0000) >> 16)
@@ -144,14 +144,6 @@ class Encapsulation:
 
         def get_ip_address(self, address):
             return str(address >> 24) + "." + str(address >> 16) + "." + str(address >> 8) + "." + str(address)
-
-    @property
-    def session_handle(self):
-        return self.__session_handle
-
-    @session_handle.setter
-    def session_handle(self, session_handle):
-        self.__session_handle = session_handle
 
     @property
     def command_specific_data(self):
