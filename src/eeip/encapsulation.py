@@ -47,7 +47,7 @@ class SocketAddress:
 class Encapsulation:
     def __init__(self):
         self.__sender_context = [0] * 8
-        self.__command_specific_data = []
+        self.command_specific_data = []
         self.session_handle = 0
         self.command = CommandsEnum.NOP
         self.length = 0
@@ -80,7 +80,7 @@ class Encapsulation:
         returnvalue.append((self.__options & 0xFF00) >> 8)
         returnvalue.append((self.__options & 0xFF0000) >> 16)
         returnvalue.append((self.__options & 0xFF000000) >> 24)
-        for data in self.__command_specific_data:
+        for data in self.command_specific_data:
             returnvalue.append(data & 0xFF)
         return returnvalue
 
@@ -144,14 +144,6 @@ class Encapsulation:
 
         def get_ip_address(self, address):
             return str(address >> 24) + "." + str(address >> 16) + "." + str(address >> 8) + "." + str(address)
-
-    @property
-    def command_specific_data(self):
-        return self.__command_specific_data
-
-    @command_specific_data.setter
-    def command_specific_data(self, command_specific_data):
-        self.__command_specific_data = command_specific_data
 
     @property
     def status(self):
