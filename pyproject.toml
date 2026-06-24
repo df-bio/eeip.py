@@ -1,0 +1,43 @@
+[project]
+name = "eeip"
+version = "0.1.0"
+description = "EtherNet/IP client library maintained by Differential Bio, based on rossmann-engineering/eeip.py"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE.txt"]
+authors = [
+    { name = "Martin Patz", email = "martin@differential.bio" },
+]
+maintainers = [
+    { name = "Differential Bio GmbH" },
+]
+keywords = ["ethernet-ip", "ethernetip", "cip", "industrial-automation", "plc"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Networking",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=4.0.0",
+    "ruff>=0.12.0",
+]
+
+[project.urls]
+Repository = "https://github.com/df-bio/eeip.py"
+Upstream = "https://github.com/rossmann-engineering/eeip.py"
+
+[build-system]
+requires = ["uv_build>=0.11.23,<0.12.0"]
+build-backend = "uv_build"

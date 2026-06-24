@@ -7,7 +7,7 @@ import time
 import traceback
 from enum import IntEnum
 
-from eeip import cip, encapsulation
+from . import cip, encapsulation
 
 
 class EEIPClient:
