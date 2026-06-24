@@ -711,22 +711,32 @@ class EEIPClient:
         except Exception:  # Handle exception to allow to close the connection if closed from the target before
             pass
 
+        timeout_seconds = 5.0
+        if self.__tcpClient_socket is not None and self.__tcpClient_socket.gettimeout() is not None:
+            timeout_seconds = self.__tcpClient_socket.gettimeout()
+
         try:
-            while len(self.__receivedata) == 0:
-                pass
-        except Exception:
-            raise Exception("Read Timeout")
+            wait_deadline = time.monotonic() + timeout_seconds
+            while len(self.__receivedata) == 0 and time.monotonic() < wait_deadline:
+                time.sleep(0.001)
 
-        # --------------------------BEGIN Error?
-        if len(self.__receivedata) > 41:
-            if self.__receivedata[42] != 0:  # Exception codes see "Table B-1.1 CIP General Status Codes"
-                raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
-        # --------------------------END Error?
+            if len(self.__receivedata) == 0:
+                raise TimeoutError(f"Read timeout after {timeout_seconds} seconds")
 
-        self.__stoplistening_udp = True
-        self.__stoplistening = True
+            # --------------------------BEGIN Error?
+            if len(self.__receivedata) > 41:
+                if self.__receivedata[42] != 0:  # Exception codes see "Table B-1.1 CIP General Status Codes"
+                    raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
+            # --------------------------END Error?
+        finally:
+            self.__stoplistening_udp = True
+            self.__stoplistening = True
 
-        self.__udp_server_socket.close()
+            if self.__udp_server_socket is not None:
+                try:
+                    self.__udp_server_socket.close()
+                except Exception:
+                    pass
 
     def __udp_listen(self):
         self.__stoplistening_udp = False
