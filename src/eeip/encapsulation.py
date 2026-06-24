@@ -49,13 +49,14 @@ class Encapsulation:
         self.__sender_context = [0] * 8
         self.__command_specific_data = []
         self.__session_handle = 0
+        self.command = CommandsEnum.NOP
         self.__options = 0
         self.__status = StatusEnum.SUCCESS
 
     def to_bytes(self):
         returnvalue = []
-        returnvalue.append(int(self.__command) & 0x00FF)
-        returnvalue.append((int(self.__command) & 0xFF00) >> 8)
+        returnvalue.append(int(self.command) & 0x00FF)
+        returnvalue.append((int(self.command) & 0xFF00) >> 8)
         returnvalue.append(self.__length & 0x00FF)
         returnvalue.append((self.__length & 0xFF00) >> 8)
         returnvalue.append(self.__session_handle & 0xFF)
@@ -142,14 +143,6 @@ class Encapsulation:
 
         def get_ip_address(self, address):
             return str(address >> 24) + "." + str(address >> 16) + "." + str(address >> 8) + "." + str(address)
-
-    @property
-    def command(self):
-        return self.__command
-
-    @command.setter
-    def command(self, command):
-        self.__command = command
 
     @property
     def length(self):
