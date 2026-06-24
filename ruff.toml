@@ -1,0 +1,10 @@
+line-length = 120
+target-version = "py310"
+include = ["eeip/**/*.py", "testing/**/*.py"]
+
+[lint]
+select = ["I", "F401"]
+
+[lint.isort]
+force-wrap-aliases = true
+combine-as-imports = true
