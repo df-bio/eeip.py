@@ -851,10 +851,10 @@ class EEIPClient:
         """
         Closes  TCP-Socket connection
         """
-        if self.__tcpClientSocket is not None:
+        if self.__tcpClient_socket is not None:
             self.__stoplistening = True
-            self.__tcpClientSocket.shutdown(socket.SHUT_RDWR)
-            self.__tcpClientSocket.close()
+            self.__tcpClient_socket.shutdown(socket.SHUT_RDWR)
+            self.__tcpClient_socket.close()
         self.__connected = False
 
     def get_epath(self, class_id, instance_id, attribute_id):
