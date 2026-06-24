@@ -4,9 +4,9 @@ import socket
 import struct
 import traceback
 from eeip import cip
-from enum import Enum, IntEnum
 import random
 import time, datetime
+from enum import IntEnum
 
 
 class EEIPClient:
