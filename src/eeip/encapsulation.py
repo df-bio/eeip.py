@@ -50,6 +50,7 @@ class Encapsulation:
         self.__command_specific_data = []
         self.__session_handle = 0
         self.command = CommandsEnum.NOP
+        self.length = 0
         self.__options = 0
         self.__status = StatusEnum.SUCCESS
 
@@ -57,8 +58,8 @@ class Encapsulation:
         returnvalue = []
         returnvalue.append(int(self.command) & 0x00FF)
         returnvalue.append((int(self.command) & 0xFF00) >> 8)
-        returnvalue.append(self.__length & 0x00FF)
-        returnvalue.append((self.__length & 0xFF00) >> 8)
+        returnvalue.append(self.length & 0x00FF)
+        returnvalue.append((self.length & 0xFF00) >> 8)
         returnvalue.append(self.__session_handle & 0xFF)
         returnvalue.append((self.__session_handle & 0xFF00) >> 8)
         returnvalue.append((self.__session_handle & 0xFF0000) >> 16)
@@ -143,14 +144,6 @@ class Encapsulation:
 
         def get_ip_address(self, address):
             return str(address >> 24) + "." + str(address >> 16) + "." + str(address >> 8) + "." + str(address)
-
-    @property
-    def length(self):
-        return self.__length
-
-    @length.setter
-    def length(self, length):
-        self.__length = length
 
     @property
     def session_handle(self):
