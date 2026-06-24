@@ -38,10 +38,10 @@ class SocketAddress:
     """
 
     def __init__(self):
-        sin_family = int()
-        sin_port = int()
-        sin_address = int()
-        sin_zero = [0] * 8
+        self.sin_family = 0
+        self.sin_port = 0
+        self.sin_address = 0
+        self.sin_zero = [0] * 8
 
 
 class Encapsulation:
