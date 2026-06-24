@@ -1307,21 +1307,21 @@ class EEIPClient:
 
 
 class ConnectionType(IntEnum):
-    NULL = (0,)
-    MULTICAST = (1,)
+    NULL = 0
+    MULTICAST = 1
     POINT_TO_POINT = 2
 
 
 class Priority(IntEnum):
-    LOW = (0,)
-    HIGH = (1,)
+    LOW = 0
+    HIGH = 1
     SCHEDULED = 2
     URGENT = 3
 
 
 class RealTimeFormat(IntEnum):
-    MODELESS = (0,)
-    ZEROLENGTH = (1,)
+    MODELESS = 0
+    ZEROLENGTH = 1
     HEARTBEAT = 2
     HEADER32BIT = 3
 
