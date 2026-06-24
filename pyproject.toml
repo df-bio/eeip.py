@@ -16,7 +16,7 @@ keywords = ["ethernet-ip", "ethernetip", "cip", "industrial-automation", "plc"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+
     "Operating System :: POSIX",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
