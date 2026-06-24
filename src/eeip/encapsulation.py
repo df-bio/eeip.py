@@ -47,13 +47,13 @@ class SocketAddress:
 class Encapsulation:
     def __init__(self):
         self.__sender_context = [0] * 8
-        self.__command_specific_data = list()
+        self.__command_specific_data = []
         self.__session_handle = 0
         self.__options = 0
         self.__status = StatusEnum.SUCCESS
 
     def to_bytes(self):
-        returnvalue = list()
+        returnvalue = []
         returnvalue.append(int(self.__command) & 0x00FF)
         returnvalue.append((int(self.__command) & 0xFF00) >> 8)
         returnvalue.append(self.__length & 0x00FF)
@@ -99,7 +99,7 @@ class Encapsulation:
             self.vendor_id1 = int()  # Device manufacturers Vendor ID
             self.device_type1 = int()  # evice Type of product
             self.product_code1 = int()  # Product Code assigned with respect to device type
-            self.revision1 = list()  # Device revision
+            self.revision1 = []  # Device revision
             self.status1 = int()  # Current status of device
             self.serial_number = int()  # Serial number of device
             self.product_name_length = int()
@@ -187,7 +187,7 @@ class CommonPacketFormat:
         self.address_length = 0
         self.data_item = 0xB2  # 0xB2 = Unconnected Data Item
         self.data_length = 8
-        self.data = list()
+        self.data = []
         self.sockaddr_info_item_o_t = 0x8001  # 8000 for O->T and 8001 for T->O - Volume 2 Table 2-6.9
         self.sockaddr_info_length = 16
         self.socketaddr_info_o_t = None
@@ -195,7 +195,7 @@ class CommonPacketFormat:
     def to_bytes(self):
         if self.socketaddr_info_o_t is not None:
             self.item_count = 3
-        returnvalue = list()
+        returnvalue = []
         returnvalue.append(self.item_count & 0xFF)
         returnvalue.append((self.item_count & 0xFF00) >> 8)
         returnvalue.append(self.address_item & 0xFF)

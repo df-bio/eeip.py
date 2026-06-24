@@ -197,7 +197,7 @@ class EEIPClient:
                 raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
         # --------------------------END Error?
 
-        returnvalue = list()
+        returnvalue = []
         for i in range(len(self.__receivedata) - 44):
             returnvalue.append(self.__receivedata[i + 44])
 
@@ -279,7 +279,7 @@ class EEIPClient:
                 raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
         # --------------------------END Error?
 
-        returnvalue = list()
+        returnvalue = []
         for i in range(len(self.__receivedata) - 44):
             returnvalue.append(self.__receivedata[i + 44])
 
@@ -749,7 +749,7 @@ class EEIPClient:
                     if self.__t_o_realtime_format == RealTimeFormat.HEADER32BIT:
                         header_offset = 4
                     with self.__lock_receive_data:
-                        self.__t_o_iodata = list()
+                        self.__t_o_iodata = []
                         for i in range(0, len(__receivedata_udp) - 20 - header_offset):
                             self.__t_o_iodata.append(__receivedata_udp[20 + i + header_offset])
                     self.__last_received_implicit_message = datetime.datetime.utcnow()
@@ -765,7 +765,7 @@ class EEIPClient:
         sequence_count = 0
         sequence = 0
         while not self.__stoplistening_udp:
-            message = list()
+            message = []
 
             # -------------------Item Count
             message.append(2)
@@ -867,7 +867,7 @@ class EEIPClient:
         :param attribute_id: Requested Attribute ID - if "0" the attribute will be ignored
         :return: Encrypted Request Path
         """
-        returnvalue = list()
+        returnvalue = []
         if class_id < 0xFF:
             returnvalue.append(0x20)
             returnvalue.append(class_id & 0xFF)
