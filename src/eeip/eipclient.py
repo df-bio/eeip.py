@@ -748,11 +748,10 @@ class EEIPClient:
                     header_offset = 0
                     if self.__t_o_realtime_format == RealTimeFormat.HEADER32BIT:
                         header_offset = 4
-                    self.__lock_receive_data.acquire()
-                    self.__t_o_iodata = list()
-                    for i in range(0, len(__receivedata_udp) - 20 - header_offset):
-                        self.__t_o_iodata.append(__receivedata_udp[20 + i + header_offset])
-                    self.__lock_receive_data.release()
+                    with self.__lock_receive_data:
+                        self.__t_o_iodata = list()
+                        for i in range(0, len(__receivedata_udp) - 20 - header_offset):
+                            self.__t_o_iodata.append(__receivedata_udp[20 + i + header_offset])
                     self.__last_received_implicit_message = datetime.datetime.utcnow()
                     # (self.__t_o_iodata)
 
@@ -1233,9 +1232,8 @@ class EEIPClient:
         """
         Provides Access to the Class 1 Real-Time IO-Data Target -> Originator for Implicit Messaging
         """
-        self.__lock_receive_data.acquire()
-        self.__t_o_iodata = t_o_iodata
-        self.__lock_receive_data.release()
+        with self.__lock_receive_data:
+            self.__t_o_iodata = t_o_iodata
 
     @property
     def o_t_realtime_format(self):
