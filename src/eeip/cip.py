@@ -131,5 +131,4 @@ def get_status_code(code):
 
 class CIPException(Exception):
     def __init__(self, message):
-        # self.expression = expression
         self.message = message
