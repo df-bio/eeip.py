@@ -6,12 +6,12 @@ class StatusEnum(IntEnum):
     Table 2-3.3 Error Codes
     """
 
-    SUCCESS = (0x0000,)
-    INVALID_COMMMAND = (0x0001,)
-    INSUFFICIENT_MEMORY = (0x0002,)
-    INCORRECT_DATA = (0x0003,)
-    INVALID_SESSION_HANDLE = (0x0064,)
-    INVALID_LENGTH = (0x0065,)
+    SUCCESS = 0x0000
+    INVALID_COMMMAND = 0x0001
+    INSUFFICIENT_MEMORY = 0x0002
+    INCORRECT_DATA = 0x0003
+    INVALID_SESSION_HANDLE = 0x0064
+    INVALID_LENGTH = 0x0065
     UNSUPPORTED_ENCAPSULTATION_PROTOCOL = 0x0069
 
 
@@ -20,15 +20,15 @@ class CommandsEnum(IntEnum):
     Table 2-3.2 Encapsulation Commands
     """
 
-    NOP = (0x0000,)
-    LIST_SERVICES = (0x0004,)
-    LIST_IDENTITY = (0x0063,)
-    LIST_INTERFACES = (0x0064,)
-    REGISTER_SESSION = (0x0065,)
-    UNREGISTER_SESSIOM = (0x0066,)
-    SEND_RRDATA = (0x006F,)
-    SENDUNITDATA = (0x0070,)
-    INDICATE_STATUS = (0x0072,)
+    NOP = 0x0000
+    LIST_SERVICES = 0x0004
+    LIST_IDENTITY = 0x0063
+    LIST_INTERFACES = 0x0064
+    REGISTER_SESSION = 0x0065
+    UNREGISTER_SESSIOM = 0x0066
+    SEND_RRDATA = 0x006F
+    SENDUNITDATA = 0x0070
+    INDICATE_STATUS = 0x0072
     CANCEL = 0x0073
 
 
@@ -38,22 +38,22 @@ class SocketAddress:
     """
 
     def __init__(self):
-        sin_family = int()
-        sin_port = int()
-        sin_address = int()
-        sin_zero = [0] * 8
+        self.sin_family = 0
+        self.sin_port = 0
+        self.sin_address = 0
+        self.sin_zero = [0] * 8
 
 
 class Encapsulation:
     def __init__(self):
         self.__sender_context = [0] * 8
-        self.__command_specific_data = list()
+        self.__command_specific_data = []
         self.__session_handle = 0
         self.__options = 0
         self.__status = StatusEnum.SUCCESS
 
     def to_bytes(self):
-        returnvalue = list()
+        returnvalue = []
         returnvalue.append(int(self.__command) & 0x00FF)
         returnvalue.append((int(self.__command) & 0xFF00) >> 8)
         returnvalue.append(self.__length & 0x00FF)
@@ -99,7 +99,7 @@ class Encapsulation:
             self.vendor_id1 = int()  # Device manufacturers Vendor ID
             self.device_type1 = int()  # evice Type of product
             self.product_code1 = int()  # Product Code assigned with respect to device type
-            self.revision1 = list()  # Device revision
+            self.revision1 = []  # Device revision
             self.status1 = int()  # Current status of device
             self.serial_number = int()  # Serial number of device
             self.product_name_length = int()
@@ -187,7 +187,7 @@ class CommonPacketFormat:
         self.address_length = 0
         self.data_item = 0xB2  # 0xB2 = Unconnected Data Item
         self.data_length = 8
-        self.data = list()
+        self.data = []
         self.sockaddr_info_item_o_t = 0x8001  # 8000 for O->T and 8001 for T->O - Volume 2 Table 2-6.9
         self.sockaddr_info_length = 16
         self.socketaddr_info_o_t = None
@@ -195,7 +195,7 @@ class CommonPacketFormat:
     def to_bytes(self):
         if self.socketaddr_info_o_t is not None:
             self.item_count = 3
-        returnvalue = list()
+        returnvalue = []
         returnvalue.append(self.item_count & 0xFF)
         returnvalue.append((self.item_count & 0xFF00) >> 8)
         returnvalue.append(self.address_item & 0xFF)

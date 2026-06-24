@@ -197,7 +197,7 @@ class EEIPClient:
                 raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
         # --------------------------END Error?
 
-        returnvalue = list()
+        returnvalue = []
         for i in range(len(self.__receivedata) - 44):
             returnvalue.append(self.__receivedata[i + 44])
 
@@ -279,7 +279,7 @@ class EEIPClient:
                 raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
         # --------------------------END Error?
 
-        returnvalue = list()
+        returnvalue = []
         for i in range(len(self.__receivedata) - 44):
             returnvalue.append(self.__receivedata[i + 44])
 
@@ -748,11 +748,10 @@ class EEIPClient:
                     header_offset = 0
                     if self.__t_o_realtime_format == RealTimeFormat.HEADER32BIT:
                         header_offset = 4
-                    self.__lock_receive_data.acquire()
-                    self.__t_o_iodata = list()
-                    for i in range(0, len(__receivedata_udp) - 20 - header_offset):
-                        self.__t_o_iodata.append(__receivedata_udp[20 + i + header_offset])
-                    self.__lock_receive_data.release()
+                    with self.__lock_receive_data:
+                        self.__t_o_iodata = []
+                        for i in range(0, len(__receivedata_udp) - 20 - header_offset):
+                            self.__t_o_iodata.append(__receivedata_udp[20 + i + header_offset])
                     self.__last_received_implicit_message = datetime.datetime.utcnow()
                     # (self.__t_o_iodata)
 
@@ -766,7 +765,7 @@ class EEIPClient:
         sequence_count = 0
         sequence = 0
         while not self.__stoplistening_udp:
-            message = list()
+            message = []
 
             # -------------------Item Count
             message.append(2)
@@ -831,11 +830,6 @@ class EEIPClient:
                 message.append(self.o_t_iodata[i])
             # -------------------write data
 
-            sock = socket.socket(
-                socket.AF_INET,  # Internet
-                socket.SOCK_DGRAM,
-            )  # UDP
-
             self.__udp_server_socket.sendto(bytearray(message), (self.__ip_address, self.__target_udp_port))
             time.sleep(float(self.__requested_packet_rate_o_t) / 1000000.0)
 
@@ -857,10 +851,10 @@ class EEIPClient:
         """
         Closes  TCP-Socket connection
         """
-        if self.__tcpClientSocket is not None:
+        if self.__tcpClient_socket is not None:
             self.__stoplistening = True
-            self.__tcpClientSocket.shutdown(socket.SHUT_RDWR)
-            self.__tcpClientSocket.close()
+            self.__tcpClient_socket.shutdown(socket.SHUT_RDWR)
+            self.__tcpClient_socket.close()
         self.__connected = False
 
     def get_epath(self, class_id, instance_id, attribute_id):
@@ -873,7 +867,7 @@ class EEIPClient:
         :param attribute_id: Requested Attribute ID - if "0" the attribute will be ignored
         :return: Encrypted Request Path
         """
-        returnvalue = list()
+        returnvalue = []
         if class_id < 0xFF:
             returnvalue.append(0x20)
             returnvalue.append(class_id & 0xFF)
@@ -893,7 +887,7 @@ class EEIPClient:
             returnvalue.append(instance_id & 0x00FF)
             returnvalue.append((instance_id & 0xFF00) >> 8)
 
-        if attribute_id != None:
+        if attribute_id is not None:
             if attribute_id < 0xFF:
                 returnvalue.append(0x30)
                 returnvalue.append(attribute_id & 0xFF)
@@ -1233,9 +1227,8 @@ class EEIPClient:
         """
         Provides Access to the Class 1 Real-Time IO-Data Target -> Originator for Implicit Messaging
         """
-        self.__lock_receive_data.acquire()
-        self.__t_o_iodata = t_o_iodata
-        self.__lock_receive_data.release()
+        with self.__lock_receive_data:
+            self.__t_o_iodata = t_o_iodata
 
     @property
     def o_t_realtime_format(self):
@@ -1307,21 +1300,21 @@ class EEIPClient:
 
 
 class ConnectionType(IntEnum):
-    NULL = (0,)
-    MULTICAST = (1,)
+    NULL = 0
+    MULTICAST = 1
     POINT_TO_POINT = 2
 
 
 class Priority(IntEnum):
-    LOW = (0,)
-    HIGH = (1,)
+    LOW = 0
+    HIGH = 1
     SCHEDULED = 2
     URGENT = 3
 
 
 class RealTimeFormat(IntEnum):
-    MODELESS = (0,)
-    ZEROLENGTH = (1,)
+    MODELESS = 0
+    ZEROLENGTH = 1
     HEARTBEAT = 2
     HEADER32BIT = 3
 
@@ -1331,7 +1324,7 @@ if __name__ == "__main__":
     eeipclient.register_session("192.168.178.107")
     eeipclient.o_t_instance_id = 0x64
     eeipclient.o_t_length = 4
-    eeipclient.requested_packet_rate_o_t = 100000
+    eeipclient.o_t_requested_packet_rate = 100000
     eeipclient.o_t_realtime_format = RealTimeFormat.HEADER32BIT
     eeipclient.o_t_owner_redundant = False
     eeipclient.o_t_variable_length = False
@@ -1339,7 +1332,7 @@ if __name__ == "__main__":
 
     eeipclient.t_o_instance_id = 0x65
     eeipclient.t_o_length = 16
-    eeipclient.requested_packet_rate_t_o = 100000
+    eeipclient.t_o_requested_packet_rate = 100000
     eeipclient.t_o_realtime_format = RealTimeFormat.MODELESS
     eeipclient.t_o_owner_redundant = False
     eeipclient.t_o_variable_length = False
