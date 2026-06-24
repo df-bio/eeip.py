@@ -1,1 +1,1 @@
-from .eipclient import EEIPClient, RealTimeFormat, ConnectionType
+from .eipclient import ConnectionType, EEIPClient, RealTimeFormat
