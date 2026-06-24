@@ -830,11 +830,6 @@ class EEIPClient:
                 message.append(self.o_t_iodata[i])
             # -------------------write data
 
-            sock = socket.socket(
-                socket.AF_INET,  # Internet
-                socket.SOCK_DGRAM,
-            )  # UDP
-
             self.__udp_server_socket.sendto(bytearray(message), (self.__ip_address, self.__target_udp_port))
             time.sleep(float(self.__requested_packet_rate_o_t) / 1000000.0)
 
