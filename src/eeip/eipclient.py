@@ -893,7 +893,7 @@ class EEIPClient:
             returnvalue.append(instance_id & 0x00FF)
             returnvalue.append((instance_id & 0xFF00) >> 8)
 
-        if attribute_id != None:
+        if attribute_id is not None:
             if attribute_id < 0xFF:
                 returnvalue.append(0x30)
                 returnvalue.append(attribute_id & 0xFF)
