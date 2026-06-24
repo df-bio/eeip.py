@@ -10,3 +10,6 @@ __pycache__/
 # Packaging outputs
 /dist/
 /build/
+
+# UV package management
+uv.lock
