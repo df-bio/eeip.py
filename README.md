@@ -1,5 +1,12 @@
 ## EEIP.py - THE Ethernet/IP compatible Python Module
 
+Maintained fork by **Differential Bio GmbH**.
+
+- Fork repository: https://github.com/df-bio/eeip.py
+- Maintainer/author: Martin Patz <martin@differential.bio>
+- Original upstream repository: https://github.com/rossmann-engineering/eeip.py
+- Original author: Stefan Roßmann
+
 - Support of Explicit and Implicit Messaging
 - Supports IO Scanner and Explicit Message Client functionality
 
@@ -22,11 +29,21 @@ Visit www.eeip-library.de for more informations and Codesamples
 
 ### 1. Installation:
 
-pip install eeip
+Recommended (install directly from this fork):
+
+```bash
+pip install "eeip @ git+https://github.com/df-bio/eeip.py.git"
+```
+
+Alternative (explicit branch/ref pinning):
+
+```bash
+pip install "eeip @ git+https://github.com/df-bio/eeip.py.git@main"
+```
 
 ### Requirements:
 
-Python 3.9
+Python 3.10+
 
 <div id="explicitmessaging"/>
 
