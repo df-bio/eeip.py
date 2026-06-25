@@ -1,6 +1,6 @@
 [project]
 name = "eeip"
-version = "0.1.0"
+version = "0.1.1"
 description = "EtherNet/IP client library maintained by Differential Bio, based on rossmann-engineering/eeip.py"
 readme = "README.md"
 requires-python = ">=3.10"
