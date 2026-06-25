@@ -47,6 +47,7 @@ class EEIPClient:
         self.__tcp_port = 0xAF12
 
         self.__udp_client_receive_closed = False
+        self.__udp_server_socket = None
 
     def ListIdentity(self):
         """
@@ -110,15 +111,28 @@ class EEIPClient:
         """
         Sends an UnRegisterSession command to a target to terminate session
         """
-        __encapsulation = encapsulation.Encapsulation()
-        __encapsulation.command = encapsulation.CommandsEnum.UNREGISTER_SESSIOM
-        __encapsulation.length = 0
-        __encapsulation.session_handle = self.__session_handle
-        self.__tcpClient_socket.send(bytearray(__encapsulation.to_bytes()))
+        if self.__tcpClient_socket is not None and self.__session_handle != 0:
+            __encapsulation = encapsulation.Encapsulation()
+            __encapsulation.command = encapsulation.CommandsEnum.UNREGISTER_SESSIOM
+            __encapsulation.length = 0
+            __encapsulation.session_handle = self.__session_handle
+
+            try:
+                self.__tcpClient_socket.send(bytearray(__encapsulation.to_bytes()))
+            except OSError:
+                pass
+
         if self.__tcpClient_socket is not None:
             self.__stoplistening = True
-            self.__tcpClient_socket.shutdown(socket.SHUT_RDWR)
-            self.__tcpClient_socket.close()
+            try:
+                self.__tcpClient_socket.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+            try:
+                self.__tcpClient_socket.close()
+            except OSError:
+                pass
+            self.__tcpClient_socket = None
         self.__session_handle = 0
 
     def get_attribute_single(self, class_id, instance_id, attribute_id):
@@ -703,29 +717,36 @@ class EEIPClient:
         if self.__t_o_connection_type != ConnectionType.NULL:
             common_packet_format.data.append(0x2C)
             common_packet_format.data.append(self.__t_o_instance_id)
-        try:
-            data_to_write = __encapsulation.to_bytes() + common_packet_format.to_bytes()
-            self.__receivedata = bytearray()
-            self.__tcpClient_socket.send(bytearray(data_to_write))
-        except Exception:  # Handle exception to allow to close the connection if closed from the target before
-            pass
+        data_to_write = __encapsulation.to_bytes() + common_packet_format.to_bytes()
+        self.__receivedata = bytearray()
+        self.__tcpClient_socket.send(bytearray(data_to_write))
+
+        timeout_seconds = 5.0
+        if self.__tcpClient_socket is not None and self.__tcpClient_socket.gettimeout() is not None:
+            timeout_seconds = self.__tcpClient_socket.gettimeout()
 
         try:
-            while len(self.__receivedata) == 0:
-                pass
-        except Exception:
-            raise Exception("Read Timeout")
+            wait_deadline = time.monotonic() + timeout_seconds
+            while len(self.__receivedata) == 0 and time.monotonic() < wait_deadline:
+                time.sleep(0.001)
 
-        # --------------------------BEGIN Error?
-        if len(self.__receivedata) > 41:
-            if self.__receivedata[42] != 0:  # Exception codes see "Table B-1.1 CIP General Status Codes"
-                raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
-        # --------------------------END Error?
+            if len(self.__receivedata) == 0:
+                raise TimeoutError(f"Read timeout after {timeout_seconds} seconds")
 
-        self.__stoplistening_udp = True
-        self.__stoplistening = True
+            # --------------------------BEGIN Error?
+            if len(self.__receivedata) > 41:
+                if self.__receivedata[42] != 0:  # Exception codes see "Table B-1.1 CIP General Status Codes"
+                    raise cip.CIPException(cip.get_status_code(self.__receivedata[42]))
+            # --------------------------END Error?
+        finally:
+            self.__stoplistening_udp = True
+            self.__stoplistening = True
 
-        self.__udp_server_socket.close()
+            if self.__udp_server_socket is not None:
+                try:
+                    self.__udp_server_socket.close()
+                except Exception:
+                    pass
 
     def __udp_listen(self):
         self.__stoplistening_udp = False
@@ -842,9 +863,12 @@ class EEIPClient:
                     # self.__receivedata = bytearray()
                     self.__timeout = 500
                     if self.__tcpClient_socket is not None:
-                        self.__receivedata = self.__tcpClient_socket.recv(255)
+                        try:
+                            self.__receivedata = self.__tcpClient_socket.recv(255)
+                        except socket.timeout:
+                            continue
                         # print (self.__receivedata)
-        except socket.timeout:
+        except OSError:
             self.__receivedata = bytearray()
 
     def close(self):
