@@ -111,15 +111,28 @@ class EEIPClient:
         """
         Sends an UnRegisterSession command to a target to terminate session
         """
-        __encapsulation = encapsulation.Encapsulation()
-        __encapsulation.command = encapsulation.CommandsEnum.UNREGISTER_SESSIOM
-        __encapsulation.length = 0
-        __encapsulation.session_handle = self.__session_handle
-        self.__tcpClient_socket.send(bytearray(__encapsulation.to_bytes()))
+        if self.__tcpClient_socket is not None and self.__session_handle != 0:
+            __encapsulation = encapsulation.Encapsulation()
+            __encapsulation.command = encapsulation.CommandsEnum.UNREGISTER_SESSIOM
+            __encapsulation.length = 0
+            __encapsulation.session_handle = self.__session_handle
+
+            try:
+                self.__tcpClient_socket.send(bytearray(__encapsulation.to_bytes()))
+            except OSError:
+                pass
+
         if self.__tcpClient_socket is not None:
             self.__stoplistening = True
-            self.__tcpClient_socket.shutdown(socket.SHUT_RDWR)
-            self.__tcpClient_socket.close()
+            try:
+                self.__tcpClient_socket.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+            try:
+                self.__tcpClient_socket.close()
+            except OSError:
+                pass
+            self.__tcpClient_socket = None
         self.__session_handle = 0
 
     def get_attribute_single(self, class_id, instance_id, attribute_id):
