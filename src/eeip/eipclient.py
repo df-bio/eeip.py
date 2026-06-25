@@ -717,12 +717,9 @@ class EEIPClient:
         if self.__t_o_connection_type != ConnectionType.NULL:
             common_packet_format.data.append(0x2C)
             common_packet_format.data.append(self.__t_o_instance_id)
-        try:
-            data_to_write = __encapsulation.to_bytes() + common_packet_format.to_bytes()
-            self.__receivedata = bytearray()
-            self.__tcpClient_socket.send(bytearray(data_to_write))
-        except Exception:  # Handle exception to allow to close the connection if closed from the target before
-            pass
+        data_to_write = __encapsulation.to_bytes() + common_packet_format.to_bytes()
+        self.__receivedata = bytearray()
+        self.__tcpClient_socket.send(bytearray(data_to_write))
 
         timeout_seconds = 5.0
         if self.__tcpClient_socket is not None and self.__tcpClient_socket.gettimeout() is not None:
