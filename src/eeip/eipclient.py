@@ -863,9 +863,12 @@ class EEIPClient:
                     # self.__receivedata = bytearray()
                     self.__timeout = 500
                     if self.__tcpClient_socket is not None:
-                        self.__receivedata = self.__tcpClient_socket.recv(255)
+                        try:
+                            self.__receivedata = self.__tcpClient_socket.recv(255)
+                        except socket.timeout:
+                            continue
                         # print (self.__receivedata)
-        except socket.timeout:
+        except OSError:
             self.__receivedata = bytearray()
 
     def close(self):
