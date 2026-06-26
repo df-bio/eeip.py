@@ -619,6 +619,9 @@ class EEIPClient:
         """
         Closes a connection (Service code 0x4E)
         """
+        if self.__tcpClient_socket is None:
+            return
+
         length_offset = (
             5
             + (0 if self.__t_o_connection_type == ConnectionType.NULL else 2)
@@ -747,6 +750,7 @@ class EEIPClient:
                     self.__udp_server_socket.close()
                 except Exception:
                     pass
+                self.__udp_server_socket = None
 
     def __udp_listen(self):
         self.__stoplistening_udp = False
