@@ -1,4 +1,5 @@
 import datetime
+import errno
 import random
 import socket
 import struct
@@ -721,14 +722,21 @@ class EEIPClient:
             common_packet_format.data.append(0x2C)
             common_packet_format.data.append(self.__t_o_instance_id)
         data_to_write = __encapsulation.to_bytes() + common_packet_format.to_bytes()
-        self.__receivedata = bytearray()
-        self.__tcpClient_socket.send(bytearray(data_to_write))
-
-        timeout_seconds = 5.0
-        if self.__tcpClient_socket is not None and self.__tcpClient_socket.gettimeout() is not None:
-            timeout_seconds = self.__tcpClient_socket.gettimeout()
-
         try:
+            self.__receivedata = bytearray()
+
+            try:
+                self.__tcpClient_socket.send(bytearray(data_to_write))
+            except OSError as exc:
+                if exc.errno not in (errno.EPIPE, errno.ECONNRESET, errno.ENOTCONN):
+                    raise
+                # The target already closed the TCP session; treat as already closed.
+                return
+
+            timeout_seconds = 5.0
+            if self.__tcpClient_socket.gettimeout() is not None:
+                timeout_seconds = self.__tcpClient_socket.gettimeout()
+
             wait_deadline = time.monotonic() + timeout_seconds
             while len(self.__receivedata) == 0 and time.monotonic() < wait_deadline:
                 time.sleep(0.001)
